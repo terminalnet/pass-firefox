@@ -44,6 +44,45 @@ void PassFirefox::on_button_exporter(){
 
 }
 
+void PassFirefox::on_button_importer(){
+  filename = m_folder.get_filename();
+  if( filename.empty() ){
+    Gtk::MessageDialog empty( "O arquivo não pode ser vazio.", false, Gtk::MESSAGE_WARNING );
+    empty.set_title( "O arquivo não pode ser vazio." );
+    empty.run();
+    return;
+  }else if( filename.substr( filename.length() - 3, 3 ) != "gpg" ){
+    Gtk::MessageDialog empty( "O arquivo inválido.", false, Gtk::MESSAGE_WARNING );
+    empty.set_title( "O arquivo inválido." );
+    empty.run();
+    return;
+  }else{
+
+      if( m_entry3.get_text_length() == 0 ){
+        Gtk::MessageDialog empty( "Informe a senha", false, Gtk::MESSAGE_WARNING );
+        empty.set_title( "Informe a senha" );
+        empty.run();
+        return;
+      }
+
+      // logica
+      ToolsPassFox tpf;
+      if( tpf.import_file( filename, m_entry3.get_text() ) ){
+        m_label5.set_markup("<b>\u2714 Arquivo importado com sucesso!</b>");
+        m_entry3.set_text("");
+        filename = "";
+        m_folder.set_filename("Nenhum");
+      }else{
+        Gtk::MessageDialog empty( "Falha ao importar arquivo.", false, Gtk::MESSAGE_WARNING );
+        empty.set_title( "Falha ao importar arquivo.\n" );
+        empty.set_secondary_text( "Execute o programa pelo terminal para analisar a saída do erro.\n" );
+        empty.run();
+      }
+
+      //m_folder.set_visible( false );
+  }
+}
+
 void PassFirefox::set_hierarchy(){
   // Window
   add( m_fixed );
@@ -53,7 +92,7 @@ void PassFirefox::set_hierarchy(){
   m_fixed.add( m_frame2 );
   m_fixed.add( m_box4 );
   m_fixed.move( m_frame2, 6, 180 );
-  m_fixed.move( m_box4, 6, 300 );
+  m_fixed.move( m_box4, 6, 310 );
 
   // Frame 1
   m_frame1.add( m_box1 );
@@ -79,7 +118,7 @@ void PassFirefox::set_hierarchy(){
   m_alignment2.add( m_box3 );
 
   // Box 3
-  m_box3.pack_start( m_label3, true, true, 0 );
+  m_box3.pack_start( m_folder, true, true, 0 );
   m_box3.pack_start( m_entry3, true, true, 0 );
   m_box3.pack_start( m_button2, true, true, 0 );
 
@@ -125,7 +164,7 @@ void PassFirefox::draw_widgets(){
   // Box 2
   m_box2.set_visible( true );
   m_box2.set_can_focus( false );
-  
+
 
   // Entry 1
   m_entry1.set_visible( true );
@@ -174,10 +213,10 @@ void PassFirefox::draw_widgets(){
   m_box3.set_visible( true );
   m_box3.set_can_focus( false );
 
-  // Label 3
-  m_label3.set_visible( true );
-  m_label3.set_can_focus( false );
-  m_label3.set_text( "Importar arquivo GPG, insira sua senha para importar" );
+  // Label 3 → Folder
+  m_folder.set_visible( true );
+  m_folder.set_can_focus( false );
+  m_folder.set_title( "Importar arquivo GPG, insira sua senha para importar" );
 
   // Entry 3
   m_entry3.set_visible( true );
@@ -192,6 +231,7 @@ void PassFirefox::draw_widgets(){
   m_button2.set_visible( true );
   m_button2.set_can_focus( true );
   m_button2.set_focus_on_click( true );
+  m_button2.signal_clicked().connect( sigc::mem_fun( *this, &PassFirefox::on_button_importer ) );
 
   // Box 4
   m_box4.set_size_request( 397, 80 );
@@ -209,7 +249,7 @@ void PassFirefox::draw_widgets(){
   m_label6.set_text( "GNU GPL v3" );
 
 
-   // LinkButton
+  // LinkButton
   m_linkbutton.set_visible( true );
   m_linkbutton.set_can_focus( false );
   m_linkbutton.set_label("terminalroot.com.br");
