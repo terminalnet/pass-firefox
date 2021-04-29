@@ -11,6 +11,7 @@
 #include <gtkmm/frame.h>
 #include <gtkmm/linkbutton.h>
 #include <gtkmm/messagedialog.h>
+#include <gtkmm/filechooserbutton.h>
 #include <iostream>
 #include "tools-pass-fox/tools-pass-fox.hpp"
 
@@ -23,6 +24,7 @@ class PassFirefox : public Gtk::Window {
   Gtk::Button m_button1, m_button2;
   Gtk::Frame m_frame1, m_frame2;
   Gtk::LinkButton m_linkbutton;
+  Gtk::FileChooserButton m_folder;
 
   public:
     PassFirefox();
